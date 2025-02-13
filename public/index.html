@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to OhanaPal</title>
+    <title>Realtime Translator</title>
     <style>
                body {
             margin: 0;
@@ -36,62 +36,7 @@
 
     <script>
 
-        // Function to check assessment status and redirect
-        function checkAssessmentAndRedirect(token) {
-            fetch('/users/me', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Invalid token');
-                }
-                return response.json();
-            })
-            .then(userData => {
-                if (!userData.isAssessmentComplete) {
-                    window.location.href = '/dashboard';
-                } else {
-                    window.location.href = '/dashboard';
-                }
-            })
-            .catch(error => {
-                console.error('Error checking assessment status:', error);
-                window.location.href = '/login';
-            });
-        }
-
-        // Function to parse query parameters
-        function getQueryParams() {
-            const params = {};
-            window.location.search.substring(1).split("&").forEach(pair => {
-                const [key, value] = pair.split("=");
-                params[key] = decodeURIComponent(value);
-            });
-            return params;
-        }
-
-        // Extract tokens from URL and store in localStorage
-        const params = getQueryParams();
-        if (params.accessToken && params.refreshToken && params.email) {
-            localStorage.setItem('authToken', params.accessToken);
-            localStorage.setItem('refreshToken', params.refreshToken);
-            localStorage.setItem('email', params.email);
-            localStorage.setItem('userId', params.userId);
-            localStorage.setItem('token', params.token);
-            
-            checkAssessmentAndRedirect(params.token);
-        } else {
-            // No URL params, check localStorage
-            const storedToken = localStorage.getItem('token');
-            if (storedToken) {
-                checkAssessmentAndRedirect(storedToken);
-            } else {
-                // No tokens in URL or localStorage, redirect to login
-                window.location.href = '/login';
-            }
-        }
+        window.location.href = '/realtime-chat';
     </script>
 </body>
 </html>
