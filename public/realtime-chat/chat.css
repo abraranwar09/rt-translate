@@ -221,3 +221,17 @@ body {
     padding: 5px;
     margin-top: 5px;
 }
+
+.powered-by {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    font-size: 11px;
+    color: #333;
+}
+
+.powered-by-logo {
+    width: 30px; /* Adjust the size as needed */
+    margin-left: 5px;
+}
