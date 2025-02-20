@@ -1,3 +1,5 @@
+console.log('loaded');
+
 const temperature = 0.5;
 
 const today = new Date();
@@ -12,8 +14,11 @@ const outputLanguage = localStorage.getItem('output_language');
 const reprompt = `Hidden Context (the user is not aware this is part of their message): The users timezone is ${userTimeZone}. The current date/time is ${formattedToday}.`;
 
 const systemPrompt = `
-Your name is the HRSD AI Translator. You are a translation assistant for the Human Resources and Social Development ministry of Saudi Arabia. You can help the user with their translation tasks. 
-Provide direct translation of the users message from ${inputLanguage} to ${outputLanguage}. No need to greet the user, just start by providing direct translation of whatever is said.
+Your name is the HRSD AI Translator. You are a real-time AI-powered translation assistant for the Human Resources and Social Development ministry of Saudi Arabia. Your sole purpose is to provide immediate and direct translation from ${inputLanguage} to ${outputLanguage} in real-time, maintaining absolute accuracy and consistency. You must translate every spoken input without skipping, modifying, or interpreting the message in any way.
+
+You do not greet the user, ask questions, or provide explanations. You strictly convert spoken words into their equivalent meaning in the target language without embellishment or omission. If a phrase has no direct equivalent, provide a literal or phonetic transliteration instead. You never stop translating unless explicitly instructed to do so. Your function is to act as a seamless, reliable conduit between languages, ensuring a precise, uninterrupted, and immediate translation experience. Remember, the user probably doesnt know the ${outputLanguage} and is using you to help them- so asking them questions or providing explanations is not allowed.
+
+If the user asks a question that seems to be directed at you, you should simply translate the question. Translate everything that is said. You have no need to reply in any other way.
 `;
 
 let pc; // Declare the peer connection outside the function for broader scope
@@ -80,6 +85,10 @@ async function handleServerEvent(e) {
   const serverEvent = JSON.parse(e.data);
   if (serverEvent.type === "response.done") {
     console.log("Response received:", serverEvent.response.output[0]);
+    const transcript = serverEvent.response.output[0].content[0].transcript;
+    console.log('transcript', transcript);
+    document.getElementById('subtitleText').innerHTML = transcript;
+
     if (serverEvent.response.output[0].type === "function_call") {
       const { name, arguments, call_id } = serverEvent.response.output[0];
       console.log('its a tool call');
@@ -148,6 +157,7 @@ async function handleServerEvent(e) {
       displayTextResponse(textResponse);
     } else if (serverEvent.response.output[0].type === "audio") {
       const audioStream = serverEvent.response.output[0].content;
+      console.log("Audio stream received", serverEvent.response.output[0]);
       playAudioStream(audioStream);
     }
   }
@@ -173,6 +183,33 @@ function stopSession() {
   }
 }
 
+
+document.getElementById("messageInput").addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    console.log("input event");
+    const message = document.getElementById("messageInput").value;
+    console.log(message);
+    const event = {
+      type: "conversation.item.create",
+      item: {
+        type: "message",
+        role: "user",
+        content: [
+          {
+            type: "input_text",
+            text: message,
+          }
+        ]
+      },
+    };
+    
+    // WebRTC data channel and WebSocket both have .send()
+    dc.send(JSON.stringify(event));
+    
+    close_input_box();
+  }
+});
+
 function configureTools() {
     if (dc && dc.readyState === "open") {
         const event = {
@@ -184,6 +221,9 @@ function configureTools() {
         };
         dc.send(JSON.stringify(event));
         console.log("Tools configured:", event.session.tools);
+        animation.play();
+        document.getElementById("mainText").innerHTML = "AI Translator is listening...";
+        document.getElementById("subText").innerHTML = "Just speak and I will help you translate";
       } else {
         console.error("Data channel is not open");
       }
@@ -197,8 +237,7 @@ document.getElementById("talkButton").addEventListener("click", () => {
     document.getElementById("subText").innerHTML = "Click the talk button to start again or change language from the top right menu";
   } else {
     init();
-    animation.play();
-    document.getElementById("mainText").innerHTML = "AI Translator is listening...";
-    document.getElementById("subText").innerHTML = "Just speak and I will help you translate";
+    document.getElementById("mainText").innerHTML = "AI Translator is loading...";
+    document.getElementById("subText").innerHTML = "Please wait while the translator initializes";
   }
 });

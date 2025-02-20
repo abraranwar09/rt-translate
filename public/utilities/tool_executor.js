@@ -411,6 +411,31 @@ async function executeComputerCommand(command) {
     }
 }
 
+async function open_input_box(placeholder) {
+    const messageInputContainer = document.getElementById('messageInputContainer');
+    const messageInput = document.getElementById('messageInput');
+    messageInput.placeholder = placeholder;
+
+   document.getElementById('showInput').click();
+
+    return {
+        "status": "success",
+        "message": `Input box opened with placeholder: ${placeholder}`
+    };
+}
+
+async function close_input_box() {
+    const messageInputContainer = document.getElementById('messageInputContainer');
+    const messageInput = document.getElementById('messageInput');
+    messageInput.placeholder = 'Type your message...';
+
+   document.getElementById('showInput').click();
+
+    return {
+        "status": "success",
+        "message": `Input box closed and placeholder returned to default`
+    };
+}
 
 
 
