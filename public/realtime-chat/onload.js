@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Set default languages in local storage if not already set
     if (!localStorage.getItem('input_language')) {
-        localStorage.setItem('input_language', 'English');
+        localStorage.setItem('input_language', 'Auto-detect');
     }
     if (!localStorage.getItem('output_language')) {
         localStorage.setItem('output_language', 'Arabic');
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const languages = [
-        "Dutch", "Spanish", "Korean", "Italian", "German", "Thai", "Russian", "Portuguese", "Polish", "Indonesian",
+        "Auto-detect","Dutch", "Spanish", "Korean", "Italian", "German", "Thai", "Russian", "Portuguese", "Polish", "Indonesian",
         "Mandarin (TW)", "Swedish", "Czech", "English", "Japanese", "French", "Romanian", "Cantonese (CN)", "Turkish",
         "Mandarin (CN)", "Catalan", "Hungarian", "Ukrainian", "Greek", "Bulgarian", "Arabic", "Serbian", "Macedonian",
         "Cantonese (HK)", "Latvian", "Slovenian", "Hindi", "Galician", "Danish", "Urdu", "Slovak", "Hebrew", "Finnish",
