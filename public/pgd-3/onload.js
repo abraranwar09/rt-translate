@@ -92,7 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
         "Gujarati", "Punjabi", "Bengali"
     ];
 
-    languages.forEach(language => {
+    // Remove duplicates and sort alphabetically, but keep "Auto-detect" at the top
+    const uniqueLanguages = Array.from(new Set(languages));
+    uniqueLanguages.sort((a, b) => {
+        if (a === "Auto-detect") return -1;
+        if (b === "Auto-detect") return 1;
+        return a.localeCompare(b);
+    });
+
+    uniqueLanguages.forEach(language => {
         const option1 = document.createElement('option');
         option1.value = language;
         option1.textContent = language;
